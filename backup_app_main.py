@@ -4,17 +4,27 @@
 import os
 import time
 import zipfile
+import xml.dom.minidom as Mdom
 
-source = ['e:\\test_a', 'e:\\test_b']
+source_dirs = []
+source_path = 'source_path'
+target_path = 'target_path'
+# 将xml文件转换为节点
+dom = Mdom.parse('config.xml')
+# 获取当前元素,解析，获取对应路径
+elements = dom.getElementsByTagName(source_path)
+for element in elements:
+    source_dirs.append(element.firstChild.data)
+elements = dom.getElementsByTagName(target_path)
+target_dir = elements[0].firstChild.data
 
 # 目标目录
 # 1.创建日期文件夹
 # 2.以时间为文件名的压缩包
-target_dir = 'e:\\back'
 target = target_dir + os.sep + time.strftime('%Y%m%d')
 # zip_name = time.strftime('%H%M%S') + '.zip'
 # 判断目录是否存在
-for _dir in source:
+for _dir in source_dirs:
     if not os.path.exists(_dir):
         print("it is not exists that path", _dir)
 
@@ -46,14 +56,16 @@ def getdir(comment):
 if __name__ == '__main__':
     str = input('input the comment for the zip:')
     if len(str) == 0:
-        target_zip = getdir()
+        target_zip = getdir('')
     else:
         target_zip = getdir(str)
     z = zipfile.ZipFile(target_zip, 'w')
-    for s_dir in source:
-        if os.path.isdir(s_dir):
-            z.write(s_dir)
-            print('add :', s_dir)
+    for s_dir in source_dirs:
+        for dirpath, dirnames, filenames in os.walk(s_dir):
+            for filename in filenames:
+                str = os.path.join(dirpath, filename)
+                print('压缩：', str)
+                z.write(str)
     z.close()
 
 

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+    <source_path>e:\test_a</source_path>
+    <source_path>e:\test_b</source_path>
+    <target_path>e:\back</target_path>
+</config>
